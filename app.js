@@ -134,11 +134,31 @@ function renderInventory() {
   document.querySelectorAll('[data-filter]').forEach(b => b.onclick = () => { inventoryFilter = b.dataset.filter; renderInventory(); });
   document.querySelector('#sortProducts').onchange = e => { window.inventorySort = e.target.value; renderInventory(); };
   document.querySelector('#inventorySearch').oninput = e => { inventoryQuery = e.target.value; renderInventory(); document.querySelector('#inventorySearch').focus(); };
+  document.querySelectorAll('[data-product-menu]').forEach(button => {
+    button.onclick = () => openProductMenu(Number(button.dataset.productMenu));
+  });
   document.querySelector('#addProduct').onclick = openAddMethod;
 }
 
 function productCard(p) {
-  return `<article class="card product-card"><div class="product-icon">${p.icon}</div><div><h3>${p.name}</h3><p>${p.qty}</p><p class="expiry ${p.days <= 3 ? 'soon':''}">${p.days <= 1 ? 'Expires tomorrow' : `Expires in ${p.days} days`}</p></div><button class="kebab" aria-label="More options for ${p.name}">⋮</button></article>`;
+  return `<article class="card product-card"><div class="product-icon">${p.icon}</div><div><h3>${p.name}</h3><p>${p.qty}</p><p class="expiry ${p.days <= 3 ? 'soon':''}">${p.days <= 1 ? 'Expires tomorrow' : `Expires in ${p.days} days`}</p></div><button class="kebab" data-product-menu="${p.id}" aria-label="More options for ${p.name}">⋮</button></article>`;
+}
+
+function openProductMenu(id) {
+  const product = state.products.find(item => item.id === id);
+  if (!product) return;
+  openModal(`<div class="modal-handle"></div><p class="eyebrow">Inventory item</p><h2>${product.icon} ${escapeHtml(product.name)}</h2><p class="subtitle">${escapeHtml(product.qty)} · ${product.days <= 1 ? 'Expires tomorrow' : `Expires in ${product.days} days`}</p><button class="danger" id="removeProduct" style="width:100%">Remove from inventory</button>`);
+  document.querySelector('#removeProduct').onclick = () => confirmProductRemoval(product);
+}
+
+function confirmProductRemoval(product) {
+  openModal(`<div class="modal-handle"></div><p class="eyebrow">Remove product</p><h2>Remove ${escapeHtml(product.name)}?</h2><p class="subtitle">This item will no longer appear in your inventory.</p><button class="danger" id="confirmRemoveProduct" style="width:100%">Yes, remove product</button>`);
+  document.querySelector('#confirmRemoveProduct').onclick = () => {
+    state.products = state.products.filter(item => item.id !== product.id);
+    closeModal();
+    renderInventory();
+    showToast(`${product.name} removed from your inventory.`);
+  };
 }
 
 function openAddMethod() {
