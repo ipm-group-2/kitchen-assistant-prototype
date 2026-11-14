@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#174f3b">
+  <meta name="description" content="Sous-Chef Ratchet — a responsive kitchen assistant prototype for pantry, recipes and guided cooking.">
+  <title>Sous-Chef Ratchet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="desktop-backdrop" aria-hidden="true"></div>
+  <main class="app-shell" id="app">
+    <header class="topbar">
+      <button class="icon-button back-button is-hidden" id="backButton" aria-label="Go back">←</button>
+      <button class="brand" data-route="home" aria-label="Go to home">
+        <span class="brand-mark" aria-hidden="true">♨</span>
+        <span>Sous-Chef Ratchet</span>
+      </button>
+      <div class="topbar-actions">
+        <span class="demo-pill">Prototype</span>
+        <button class="avatar" data-route="other" aria-label="Open prototype information">B</button>
+      </div>
+    </header>
+
+    <section class="screen" id="screen" aria-live="polite"></section>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button class="nav-item active" data-route="home"><span aria-hidden="true">⌂</span><small>Home</small></button>
+      <button class="nav-item" data-route="recipes"><span aria-hidden="true">▤</span><small>Recipes</small></button>
+      <button class="nav-item" data-route="inventory"><span aria-hidden="true">▣</span><small>Inventory</small></button>
+      <button class="nav-item" data-route="shopping"><span aria-hidden="true">🛒</span><small>Shopping</small></button>
+      <button class="nav-item" data-route="other"><span aria-hidden="true">☰</span><small>Other</small></button>
+    </nav>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+  <div class="modal-layer" id="modalLayer" aria-live="assertive"></div>
+  <script src="app.js"></script>
+</body>
+</html>
