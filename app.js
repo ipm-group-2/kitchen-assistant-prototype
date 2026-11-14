@@ -51,7 +51,7 @@ function resetState(showMessage = false) {
   stopTimer();
   route = 'home'; history = []; activeRecipe = null; cookStep = 0;
   render();
-  if (showMessage) showToast('Prototype reset — all scenarios are ready.');
+  if (showMessage) showToast('Prototype reset and ready to use.');
 }
 
 function go(next, push = true) {
@@ -89,7 +89,7 @@ function renderHome() {
     <div class="search-wrap"><input class="search" id="homeSearch" placeholder="Search recipes or ingredients…" aria-label="Search recipes or ingredients"></div>
     <div class="quick-grid">
       <button class="quick-action" data-route="recipes"><span>🍽</span>Find recipes</button>
-      <button class="quick-action" data-route="inventory"><span>▣</span>Add product</button>
+      <button class="quick-action" data-route="inventory"><span class="fridge-icon" aria-hidden="true"><i></i></span>Add product</button>
       <button class="quick-action" data-route="shopping"><span>🛒</span>Shopping list</button>
       <button class="quick-action" id="expiryShortcut"><span>⏳</span>Expiring soon</button>
     </div>
@@ -122,7 +122,7 @@ function renderInventory() {
   if (sort === 'expiry') items.sort((a,b) => a.days - b.days);
   if (sort === 'name') items.sort((a,b) => a.name.localeCompare(b.name));
   screen.innerHTML = `
-    <p class="eyebrow">Scenario 1</p><h1>Inventory</h1><p class="subtitle">Track what you have and use it before it expires.</p>
+    <h1>Inventory</h1><p class="subtitle">Track what you have and use it before it expires.</p>
     <div class="search-wrap"><input class="search" id="inventorySearch" value="${escapeHtml(inventoryQuery)}" placeholder="Search ingredients…"></div>
     <div class="toolbar">
       ${['All','Vegetables','Dairy','Pantry','Expiring'].map(x => `<button class="chip ${inventoryFilter===x?'active':''}" data-filter="${x}">${x}</button>`).join('')}
@@ -171,7 +171,7 @@ function renderRecipes() {
   if (recipeFilter === 'Under 30 min') list = list.filter(r => r.time <= 30);
   if (recipeFilter === 'I have everything') list = list.filter(r => r.missing === 0);
   screen.innerHTML = `
-    <p class="eyebrow">Scenario 2</p><h1>Find a recipe</h1><p class="subtitle">Suggestions use your inventory and prioritise ingredients close to expiry.</p>
+    <h1>Find a recipe</h1><p class="subtitle">Suggestions use your inventory and prioritise ingredients close to expiry.</p>
     <div class="availability-banner">🥬 Spinach expires tomorrow · recipes using it appear first.</div>
     <div class="search-wrap"><input class="search" id="recipeSearch" value="${escapeHtml(recipeQuery)}" placeholder="What would you like to cook?"></div>
     <div class="toolbar">${['All','I have everything','Under 30 min'].map(x => `<button class="chip ${recipeFilter===x?'active':''}" data-recipe-filter="${x}">${x}</button>`).join('')}</div>
@@ -255,7 +255,7 @@ function formatTime(s){ return `${String(Math.floor(s/60)).padStart(2,'0')}:${St
 function renderShopping() {
   screen.innerHTML = `<p class="eyebrow">Supporting feature</p><h1>Shopping</h1><p class="subtitle">Missing ingredients can move here directly from recipes.</p><div class="card">${state.shopping.map((i,idx)=>`<label class="shopping-row ${i.done?'done':''}"><input type="checkbox" data-shopping="${idx}" ${i.done?'checked':''}><span><strong>${i.name}</strong><br><small>${i.qty}</small></span><button class="kebab" type="button">⋮</button></label>`).join('')}</div><button class="secondary" id="addShopping" style="width:100%;margin-top:14px">+ Add another item</button>`;
   document.querySelectorAll('[data-shopping]').forEach(c=>c.onchange=()=>{state.shopping[c.dataset.shopping].done=c.checked;renderShopping();});
-  document.querySelector('#addShopping').onclick=()=>showToast('Manual shopping entry is outside the three evaluated scenarios.');
+  document.querySelector('#addShopping').onclick=()=>showToast('Manual shopping entry is not available in this prototype.');
 }
 
 function renderOther() {

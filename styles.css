@@ -192,3 +192,43 @@ label { font-size: 12px; font-weight: 700; }
   .recipe-feature { grid-template-columns: 108px 1fr; }
   .demo-pill { display: none; }
 }
+.fridge-icon {
+  position: relative;
+  display: inline-block;
+  width: 16px;
+  height: 20px;
+  border: 1.8px solid currentColor;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+.fridge-icon::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 7px;
+  border-top: 1.5px solid currentColor;
+}
+
+.fridge-icon::after {
+  content: "";
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  width: 1.5px;
+  height: 3px;
+  border-radius: 1px;
+  background: currentColor;
+  box-shadow: 0 8px 0 currentColor;
+}
+
+.fridge-icon i {
+  position: absolute;
+  left: 2px;
+  bottom: -3px;
+  width: 2px;
+  height: 2px;
+  background: currentColor;
+  box-shadow: 8px 0 0 currentColor;
+}
