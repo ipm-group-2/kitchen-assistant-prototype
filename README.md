@@ -31,8 +31,8 @@ Using the app, prepare the recipe while referring to the information you need th
 - Shopping list tab is incomplete, but no scenario involves it directly.
 - Barcode scanning is simulated.
 - The cooking guide videos are placeholders rather than functional cooking footage.
-- Voice commands on cooking guide do not work.
+- Cooking guide supports hands-free voice commands (via Web Speech API or built-in voice simulator) with audible speech feedback from RatChef.
 - Recipe ingredient requirements are not accurate, they are hard coded to always have everything available or a few missing ingredients regardless of what the inventory actually contains.
-- Only the logo/mascot uses a real stored image. Recipes, ingredients and video placeholders use emojis.
+- Recipes and mascot use real stored images. Ingredients and video placeholders use emojis.
 - "Other" tab is used only to mention these limitations, in a real app it would be used to access app settings.
 - Data is stored only for the current browser session and resets on refresh.

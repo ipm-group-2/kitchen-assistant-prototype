@@ -340,6 +340,55 @@
       cursor: pointer;
     }
     .mic-toggle.is-on { border-color: #9bc9a6; background: #e5f3e9; color: #1e6a43; box-shadow: 0 0 0 2px rgba(62, 140, 86, 0.10); }
+    .mic-toggle.is-listening {
+      border-color: #2da44e !important;
+      background: #dafbe1 !important;
+      color: #1a7f37 !important;
+      animation: micPulse 1.4s infinite ease-in-out;
+    }
+    @keyframes micPulse {
+      0% { box-shadow: 0 0 0 0 rgba(46, 160, 67, 0.45); }
+      70% { box-shadow: 0 0 0 8px rgba(46, 160, 67, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(46, 160, 67, 0); }
+    }
+    .voice-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 6px 0 0;
+      padding: 4px 8px;
+      background: #eef6f0;
+      border: 1px solid #cce5d4;
+      border-radius: 9px;
+      color: #1e6a43;
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+    .voice-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #2da44e;
+      display: inline-block;
+      flex: 0 0 auto;
+      animation: dotBlink 1s infinite alternate;
+    }
+    @keyframes dotBlink {
+      from { opacity: 0.35; }
+      to { opacity: 1; }
+    }
+    .voice-sim-link {
+      color: #285b82;
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+      white-space: nowrap;
+    }
     .mic-toggle svg { display: block; width: 16px; height: 16px; }
     .cook-next-button { min-height: 43px; }
     .voice-status-note {

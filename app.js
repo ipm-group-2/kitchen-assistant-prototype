@@ -14,6 +14,7 @@ const initialProducts = [
 const recipes = [
   {
     id: 'ratatouille', name: 'Ratatouille', icon: '🍲', art: 'orange', time: 55,
+    image: 'images/recipes/Ratatouille.jpg',
     difficulty: 'Medium', match: 'You have everything', missing: 0, full: true,
     description: 'A classic Provençal bake made with thinly sliced courgette, aubergine, pepper and ripe tomatoes. The vegetables soften together over a gently cooked onion, garlic and herb base, then finish with olive oil for a rich, fragrant dish. Serve warm as a main course with crusty bread, or as a side alongside grilled fish or chicken.',
     ingredients: [
@@ -29,6 +30,7 @@ const recipes = [
   },
   {
     id: 'spinach-rice', name: 'Spinach rice bowl', icon: '🍛', art: 'green', time: 25,
+    image: 'images/recipes/Spinach Rice Bowl.jpg',
     difficulty: 'Easy', match: 'You have everything', missing: 0, full: false,
     description: 'A quick, balanced rice bowl with tender spinach folded through fluffy rice, sweet onion and garlic. A squeeze of lemon brightens the greens, while a little olive oil brings the ingredients together. It works as a light lunch on its own or as a simple side for roasted vegetables, fish or chicken.',
     ingredients: [
@@ -43,6 +45,7 @@ const recipes = [
   },
   {
     id: 'omelette', name: 'Garden omelette', icon: '🍳', art: 'yellow', time: 15,
+    image: 'images/recipes/garden-omelette.jpg',
     difficulty: 'Easy', match: 'Missing cheese', missing: 1, full: false,
     description: 'A soft, folded omelette filled with chopped spinach, tomato and onion for a fresh, savoury breakfast or light meal. The eggs are cooked gently so the centre stays tender, then finished with grated cheese for a creamy, golden filling. Serve straight from the pan with toast or a crisp green salad.',
     ingredients: [
@@ -56,6 +59,7 @@ const recipes = [
   },
   {
     id: 'pasta', name: 'Tomato basil pasta', icon: '🍝', art: 'orange', time: 30,
+    image: 'images/recipes/tomato-basil-pasta.jpg',
     difficulty: 'Easy', match: 'Missing basil', missing: 1, full: false,
     description: 'A straightforward pasta supper with a bright sauce of ripe tomatoes, garlic and olive oil. The tomatoes simmer until soft and glossy, coating the pasta without making the dish heavy. Fresh basil adds a sweet, peppery finish, with a little grated cheese and black pepper to serve.',
     ingredients: [
@@ -69,6 +73,7 @@ const recipes = [
   },
   {
     id: 'mushroom-risotto', name: 'Creamy mushroom risotto', icon: '🍄', art: 'green', time: 40,
+    image: 'images/recipes/Creamy mushroom risotto.jpg',
     difficulty: 'Medium', match: 'Missing 5 ingredients', missing: 5, full: false, catalogOnly: true,
     description: 'A slow-stirred Italian rice dish with earthy mushrooms, softened onion and a savoury stock. Arborio rice releases its starch as it cooks, creating a naturally creamy texture. Finish with butter, Parmesan and black pepper for a warming main course.',
     ingredients: [
@@ -83,6 +88,7 @@ const recipes = [
   },
   {
     id: 'chicken-fajita-bowl', name: 'Chicken fajita bowl', icon: '🥙', art: 'orange', time: 35,
+    image: 'images/recipes/Chicken fajita bowl.jpg',
     difficulty: 'Easy', match: 'Missing 5 ingredients', missing: 5, full: false, catalogOnly: true,
     description: 'A colourful bowl inspired by fajitas, with spiced chicken, charred peppers and warm rice. Add black beans for extra substance, then finish with avocado, lime and fresh coriander. The components are served separately so everyone can build their own bowl.',
     ingredients: [
@@ -97,6 +103,7 @@ const recipes = [
   },
   {
     id: 'pumpkin-soup', name: 'Roasted pumpkin soup', icon: '🎃', art: 'orange', time: 45,
+    image: 'images/recipes/Roasted pumpkin soup.webp',
     difficulty: 'Easy', match: 'Missing 4 ingredients', missing: 4, full: false, catalogOnly: true,
     description: 'A smooth autumn soup made from roasted pumpkin, garlic and onion. Roasting deepens the pumpkin’s sweetness before it is blended with warm stock and a splash of cream. Serve with black pepper, toasted seeds and crusty bread.',
     ingredients: [
@@ -110,6 +117,7 @@ const recipes = [
   },
   {
     id: 'chickpea-curry', name: 'Coconut chickpea curry', icon: '🍛', art: 'green', time: 30,
+    image: 'images/recipes/Coconut chickpea curryjpg.jpg',
     difficulty: 'Easy', match: 'Missing 4 ingredients', missing: 4, full: false, catalogOnly: true,
     description: 'A comforting one-pot curry with chickpeas simmered in coconut milk, tomatoes and fragrant spices. The sauce becomes rich and gently thick as it cooks. Serve over rice with fresh coriander and a squeeze of lime for brightness.',
     ingredients: [
@@ -124,6 +132,7 @@ const recipes = [
   },
   {
     id: 'salmon-couscous', name: 'Lemon salmon couscous', icon: '🐟', art: 'yellow', time: 25,
+    image: 'images/recipes/Lemon salmon couscous.webp',
     difficulty: 'Medium', match: 'Missing 4 ingredients', missing: 4, full: false, catalogOnly: true,
     description: 'A light Mediterranean-style plate of flaky salmon with fluffy couscous, cucumber and herbs. Lemon zest and juice bring freshness, while olive oil ties the grains and vegetables together. It is designed as a quick weeknight meal with bright, clean flavours.',
     ingredients: [
@@ -136,6 +145,17 @@ const recipes = [
     ]
   }
 ];
+
+function renderRecipeArt(r, extraClass = '') {
+  const artClass = r.art || 'orange';
+  if (r.image) {
+    return `<div class="food-art ${artClass} has-image ${extraClass}">
+      <img class="food-art-image" src="${escapeHtml(r.image)}" alt="${escapeHtml(r.name)}" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='block';">
+      <span style="display:none;" aria-hidden="true">${r.icon}</span>
+    </div>`;
+  }
+  return `<div class="food-art ${artClass} ${extraClass}"><span>${r.icon}</span></div>`;
+}
 
 const cookingGuides = {
   ratatouille: [
@@ -188,6 +208,11 @@ let timerStepIndex = null;
 let voiceEnabled = false;
 let voiceRecognition = null;
 let voiceRestartTimeout = null;
+let lastVoiceTranscript = '';
+let ratChefVoiceMuted = false;
+let stepReadOnce = false;
+let selectedTimeFilters = [];
+let selectedDifficultyFilters = [];
 
 function resetState(showMessage = false) {
   state = {
@@ -201,7 +226,9 @@ function resetState(showMessage = false) {
   };
   stopVoiceControl();
   stopTimer();
-  route = 'home'; history = []; activeRecipe = null; cookStep = 0;
+  selectedTimeFilters = [];
+  selectedDifficultyFilters = [];
+  route = 'home'; history = []; activeRecipe = null; cookStep = 0; stepReadOnce = false;
   render();
   if (showMessage) showToast('Prototype reset and ready to use.');
 }
@@ -270,7 +297,7 @@ function renderHome() {
 
 function featureRecipe(r) {
   return `<article class="card recipe-feature" tabindex="0" role="button" aria-label="Open ${r.name}">
-    <div class="food-art ${r.art}"><span>${r.icon}</span></div>
+    ${renderRecipeArt(r)}
     <div class="recipe-copy"><h3>${r.name}</h3><div class="meta-row"><span class="recipe-meta-pill recipe-time-pill">◷ ${r.time} min</span><span class="recipe-meta-pill difficulty-${String(r.difficulty).toLowerCase()}">◇ ${r.difficulty}</span></div><span class="status-chip">✓ ${r.match}</span></div>
   </article>`;
 }
@@ -348,19 +375,148 @@ function openProductForm(data = {}) {
   };
 }
 
-function renderRecipes() {
+function getFilteredRecipes(customTimes = selectedTimeFilters, customDiffs = selectedDifficultyFilters) {
   let list = recipes.filter(r => r.name.toLowerCase().includes(recipeQuery.toLowerCase()));
   if (recipeFilter === 'Under 30 min') list = list.filter(r => r.time <= 30);
   if (recipeFilter === 'I have everything') list = list.filter(r => getMissingIngredients(r).length === 0);
+
+  if (customTimes.length > 0) {
+    list = list.filter(r => {
+      return customTimes.some(t => {
+        if (t === 'under-30') return r.time <= 30;
+        if (t === 'around-1h') return r.time >= 40 && r.time <= 75;
+        if (t === 'under-90') return r.time <= 90;
+        if (t === 'over-120') return r.time > 120;
+        return false;
+      });
+    });
+  }
+
+  if (customDiffs.length > 0) {
+    list = list.filter(r => customDiffs.includes(r.difficulty));
+  }
+
+  return list;
+}
+
+function openRecipeFilterOverlay() {
+  let tempTimes = [...selectedTimeFilters];
+  let tempDiffs = [...selectedDifficultyFilters];
+
+  function getCount() {
+    return getFilteredRecipes(tempTimes, tempDiffs).length;
+  }
+
+  const timeOptions = [
+    { id: 'under-30', label: 'Less than 30 mins' },
+    { id: 'around-1h', label: '± 1 hour' },
+    { id: 'under-90', label: 'Less than 1.5 hours' },
+    { id: 'over-120', label: 'More than 2 hours' }
+  ];
+
+  const diffOptions = ['Easy', 'Medium', 'Hard'];
+
+  const count = getCount();
+
+  modalLayer.innerHTML = `
+    <div class="modal filter-modal" role="dialog" aria-modal="true" aria-label="Recipe filters">
+      <div class="modal-handle"></div>
+      <div class="filter-overlay-header">
+        <h2>Filters</h2>
+        <button class="filter-close-btn" id="closeFilterOverlay" type="button" aria-label="Close filters">✕</button>
+      </div>
+
+      <div class="filter-section">
+        <h3 class="filter-section-title">Preparation time</h3>
+        ${timeOptions.map(opt => `
+          <label class="filter-checkbox-row">
+            <input type="checkbox" name="timeOption" value="${opt.id}" ${tempTimes.includes(opt.id) ? 'checked' : ''} hidden>
+            <span class="filter-custom-check">✓</span>
+            <span>${opt.label}</span>
+          </label>
+        `).join('')}
+      </div>
+
+      <div class="filter-section">
+        <h3 class="filter-section-title">Preparation difficulty</h3>
+        ${diffOptions.map(diff => `
+          <label class="filter-checkbox-row">
+            <input type="checkbox" name="diffOption" value="${diff}" ${tempDiffs.includes(diff) ? 'checked' : ''} hidden>
+            <span class="filter-custom-check">✓</span>
+            <span>${diff}</span>
+          </label>
+        `).join('')}
+      </div>
+
+      <div class="filter-overlay-footer">
+        <button class="primary filter-apply-btn" id="applyFiltersBtn" type="button">View ${count} ${count === 1 ? 'recipe' : 'recipes'}</button>
+        <button class="filter-clear-btn" id="clearFiltersBtn" type="button">Clear filters</button>
+      </div>
+    </div>
+  `;
+
+  document.querySelector('#closeFilterOverlay').onclick = closeModal;
+  modalLayer.onclick = e => { if (e.target === modalLayer) closeModal(); };
+
+  function updateCheckboxes() {
+    tempTimes = [];
+    document.querySelectorAll('input[name="timeOption"]:checked').forEach(cb => {
+      tempTimes.push(cb.value);
+    });
+    tempDiffs = [];
+    document.querySelectorAll('input[name="diffOption"]:checked').forEach(cb => {
+      tempDiffs.push(cb.value);
+    });
+    const c = getCount();
+    const btn = document.querySelector('#applyFiltersBtn');
+    if (btn) btn.textContent = `View ${c} ${c === 1 ? 'recipe' : 'recipes'}`;
+  }
+
+  document.querySelectorAll('input[name="timeOption"], input[name="diffOption"]').forEach(input => {
+    input.onchange = updateCheckboxes;
+  });
+
+  document.querySelector('#clearFiltersBtn').onclick = () => {
+    selectedTimeFilters = [];
+    selectedDifficultyFilters = [];
+    tempTimes = [];
+    tempDiffs = [];
+    document.querySelectorAll('input[name="timeOption"], input[name="diffOption"]').forEach(cb => { cb.checked = false; });
+    closeModal();
+    renderRecipes();
+    showToast('Filters cleared.');
+  };
+
+  document.querySelector('#applyFiltersBtn').onclick = () => {
+    selectedTimeFilters = [...tempTimes];
+    selectedDifficultyFilters = [...tempDiffs];
+    closeModal();
+    renderRecipes();
+    const totalFilters = selectedTimeFilters.length + selectedDifficultyFilters.length;
+    showToast(totalFilters > 0 ? `Applied ${totalFilters} ${totalFilters === 1 ? 'filter' : 'filters'}.` : 'Showing all matching recipes.');
+  };
+}
+
+function renderRecipes() {
+  const activeCustomCount = selectedTimeFilters.length + selectedDifficultyFilters.length;
+  let list = getFilteredRecipes();
+
   screen.innerHTML = `
     <h1>Find a recipe</h1><p class="subtitle">Suggestions use your inventory and prioritise ingredients close to expiry.</p>
     <div class="availability-banner">🥬 Spinach expires tomorrow · recipes using it appear first.</div>
     <div class="search-wrap"><input class="search" id="recipeSearch" value="${escapeHtml(recipeQuery)}" placeholder="What would you like to cook?"></div>
-    <div class="toolbar">${['All','I have everything','Under 30 min'].map(x => `<button class="chip ${recipeFilter===x?'active':''}" data-recipe-filter="${x}">${x}</button>`).join('')}</div>
+    <div class="toolbar">
+      ${['All','I have everything','Under 30 min'].map(x => `<button class="chip ${(recipeFilter===x && activeCustomCount===0)?'active':''}" data-recipe-filter="${x}">${x}</button>`).join('')}
+      <button class="chip filter-chip ${activeCustomCount > 0 ? 'active' : ''}" id="openRecipeFilters" type="button" aria-label="Open filter options">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+        Filters ${activeCustomCount > 0 ? `(${activeCustomCount})` : ''}
+      </button>
+    </div>
     <p class="results-count">${list.length} matching recipes</p>
     <div class="recipe-list">${list.map(recipeCard).join('')}</div>`;
   document.querySelector('#recipeSearch').oninput = e => { recipeQuery=e.target.value; renderRecipes(); document.querySelector('#recipeSearch').focus(); };
   document.querySelectorAll('[data-recipe-filter]').forEach(b => b.onclick = () => { recipeFilter=b.dataset.recipeFilter; renderRecipes(); });
+  document.querySelector('#openRecipeFilters').onclick = openRecipeFilterOverlay;
   document.querySelectorAll('[data-recipe]').forEach(c => c.onclick = () => openRecipe(c.dataset.recipe));
 }
 
@@ -369,7 +525,7 @@ function recipeCard(r) {
   const catalogOnly = Boolean(r.catalogOnly);
   const availabilityLabel = missingCount ? `${missingCount} missing · ${catalogOnly ? 'more ingredients needed' : 'review ingredients'}` : 'You have everything';
   return `<article class="card recipe-card ${catalogOnly ? 'is-locked' : ''}" data-recipe="${r.id}" tabindex="0" role="button" aria-label="View ${escapeHtml(r.name)} recipe details${catalogOnly ? ', cooking guide coming soon' : ''}">
-    <div class="food-art ${r.art}"><span>${r.icon}</span></div>
+    ${renderRecipeArt(r)}
     <div class="recipe-copy"><h3>${escapeHtml(r.name)}</h3>
       <div class="meta-row"><span class="recipe-meta-pill recipe-time-pill">◷ ${r.time} min</span><span class="recipe-meta-pill difficulty-${String(r.difficulty).toLowerCase()}">◇ ${escapeHtml(r.difficulty)}</span></div>
       <span class="status-chip ${missingCount ? 'missing' : ''}">${missingCount ? '!' : '✓'} ${availabilityLabel}</span>
@@ -396,7 +552,7 @@ function renderRecipeDetail() {
 
   screen.innerHTML = `
     <div class="hero-card">
-      <div class="food-art ${r.art}"><span>${r.icon}</span></div>
+      ${renderRecipeArt(r)}
     </div>
     <div class="detail-body">
       <p class="eyebrow">Recipe preview</p>
@@ -524,6 +680,7 @@ function renderMissingIngredients() {
 
 function beginCooking() {
   cookStep = 0;
+  stepReadOnce = false;
   stopTimer();
   stopVoiceControl();
   go('cooking', false);
@@ -636,47 +793,43 @@ function renderCooking() {
           <button class="secondary cook-control-button" id="previousStep" ${cookStep === 0 ? 'disabled' : ''}>← Previous</button>
           <button class="secondary cook-control-button" id="repeatStep">↻ Repeat</button>
           <div class="next-step-stack">
-            <button class="mic-toggle ${voiceEnabled ? 'is-on' : ''}" id="voiceControl" type="button" aria-label="${voiceLabel}" aria-pressed="${voiceEnabled}" title="${voiceLabel}">${microphoneIconMarkup(!voiceEnabled)}</button>
+            <button class="mic-toggle ${voiceEnabled ? 'is-on is-listening' : ''}" id="voiceControl" type="button" aria-label="${voiceLabel}" aria-pressed="${voiceEnabled}" title="${voiceLabel}">${microphoneIconMarkup(!voiceEnabled)}</button>
             <button class="primary cook-next-button" id="nextStep">${cookStep === steps.length - 1 ? 'Finish →' : 'Next →'}</button>
           </div>
         </div>
-        ${voiceEnabled ? '<p class="voice-status-note">Voice commands on · say “next”, “previous”, “repeat”, “start”, “pause” or “skip”</p>' : ''}
+        ${voiceEnabled ? `
+          <div class="voice-status-bar" aria-live="polite">
+            <div style="display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+              <span class="voice-status-dot"></span>
+              <span id="voiceHeardStatus">${lastVoiceTranscript ? `Heard: “${escapeHtml(lastVoiceTranscript)}”` : (stepReadOnce ? 'Listening… say “repeat”, “video”, “next”' : 'Listening… say “read step”, “video”, “next”')}</span>
+            </div>
+            <button type="button" class="voice-sim-link" id="openVoiceSim" aria-label="Open voice command simulator">Simulate 💬</button>
+          </div>` : ''}
       </footer>
     </div>`;
 
   document.querySelector('#previousStep').onclick = () => {
     if (cookStep > 0) {
       cookStep--;
+      stepReadOnce = false;
       renderCooking();
     }
   };
   document.querySelector('#nextStep').onclick = () => {
     cookStep++;
+    stepReadOnce = false;
     renderCooking();
   };
-  document.querySelector('#repeatStep').onclick = () => showToast(`RatChef says: ${step.text}`);
-  document.querySelector('#voiceControl').onclick = toggleVoiceControl;
-  document.querySelector('#playDemo').onclick = event => {
-    const button = event.currentTarget;
-    const isPlaying = button.getAttribute('aria-pressed') === 'true';
-    button.setAttribute('aria-pressed', String(!isPlaying));
-    button.textContent = isPlaying ? '▶' : 'Ⅱ';
-    button.setAttribute('aria-label', isPlaying ? 'Play video demonstration' : 'Pause video demonstration');
-    button.closest('.cook-video-frame').classList.toggle('is-playing', !isPlaying);
-    showToast(isPlaying ? 'Video demonstration paused.' : 'Video demonstration playing (placeholder).');
-    if (!isPlaying) {
-      clearTimeout(window.videoDemoTimer);
-      window.videoDemoTimer = setTimeout(() => {
-        const currentButton = document.querySelector('#playDemo');
-        if (currentButton && currentButton.getAttribute('aria-pressed') === 'true') {
-          currentButton.setAttribute('aria-pressed', 'false');
-          currentButton.textContent = '▶';
-          currentButton.setAttribute('aria-label', 'Play video demonstration');
-          currentButton.closest('.cook-video-frame')?.classList.remove('is-playing');
-        }
-      }, 2200);
-    }
+  document.querySelector('#repeatStep').onclick = () => {
+    stepReadOnce = true;
+    showToast(`RatChef says: ${step.text}`);
+    speakRatChef(step.text);
   };
+  document.querySelector('#voiceControl').onclick = toggleVoiceControl;
+  if (document.querySelector('#openVoiceSim')) {
+    document.querySelector('#openVoiceSim').onclick = showVoiceChoices;
+  }
+  document.querySelector('#playDemo').onclick = () => toggleVideoDemo();
 
   const startButton = document.querySelector('#startTimer');
   const pauseButton = document.querySelector('#pauseTimer');
@@ -687,6 +840,7 @@ function renderCooking() {
   if (resumeButton) resumeButton.onclick = startCurrentTimer;
   if (skipButton) skipButton.onclick = skipCurrentTimer;
 }
+
 function renderCompletion() {
   const recipe = activeRecipe || recipes[0];
   stopVoiceControl();
@@ -708,6 +862,104 @@ function renderCompletion() {
   };
 }
 
+function toggleVideoDemo(action = 'toggle') {
+  const button = document.querySelector('#playDemo');
+  const frame = document.querySelector('.cook-video-frame');
+  if (!button || !frame) return;
+
+  const steps = getActiveCookingSteps();
+  const currentStep = steps[cookStep];
+  if (currentStep && currentStep.hasVideo === false) {
+    showToast('No video demonstration for this step.');
+    speakRatChef('There is no video demonstration for this step.');
+    return;
+  }
+
+  const isPlaying = button.getAttribute('aria-pressed') === 'true';
+
+  if (action === 'pause') {
+    if (!isPlaying) {
+      showToast('No video demonstration is currently playing.');
+      speakRatChef('No video is currently playing.');
+      return;
+    }
+    clearTimeout(window.videoDemoTimer);
+    button.setAttribute('aria-pressed', 'false');
+    button.textContent = '▶';
+    button.setAttribute('aria-label', 'Play video demonstration');
+    frame.classList.remove('is-playing');
+    showToast('Video demonstration paused.');
+    speakRatChef('Video paused.');
+    return;
+  }
+
+  if (action === 'restart') {
+    clearTimeout(window.videoDemoTimer);
+    frame.classList.remove('is-playing');
+    void frame.offsetWidth;
+    button.setAttribute('aria-pressed', 'true');
+    button.textContent = 'Ⅱ';
+    button.setAttribute('aria-label', 'Pause video demonstration');
+    frame.classList.add('is-playing');
+    showToast('Restarting video demonstration.');
+    speakRatChef('Restarting video demonstration.');
+    window.videoDemoTimer = setTimeout(() => {
+      const cur = document.querySelector('#playDemo');
+      if (cur && cur.getAttribute('aria-pressed') === 'true') {
+        cur.setAttribute('aria-pressed', 'false');
+        cur.textContent = '▶';
+        cur.setAttribute('aria-label', 'Play video demonstration');
+        document.querySelector('.cook-video-frame')?.classList.remove('is-playing');
+      }
+    }, 2800);
+    return;
+  }
+
+  if (action === 'play') {
+    if (isPlaying) {
+      showToast('Video demonstration is already playing.');
+      speakRatChef('Video is already playing.');
+      return;
+    }
+    button.setAttribute('aria-pressed', 'true');
+    button.textContent = 'Ⅱ';
+    button.setAttribute('aria-label', 'Pause video demonstration');
+    frame.classList.add('is-playing');
+    showToast('Video demonstration playing (placeholder).');
+    speakRatChef('Starting video demonstration.');
+    clearTimeout(window.videoDemoTimer);
+    window.videoDemoTimer = setTimeout(() => {
+      const cur = document.querySelector('#playDemo');
+      if (cur && cur.getAttribute('aria-pressed') === 'true') {
+        cur.setAttribute('aria-pressed', 'false');
+        cur.textContent = '▶';
+        cur.setAttribute('aria-label', 'Play video demonstration');
+        document.querySelector('.cook-video-frame')?.classList.remove('is-playing');
+      }
+    }, 2800);
+    return;
+  }
+
+  // Toggle on user tap
+  if (isPlaying) {
+    toggleVideoDemo('pause');
+  } else {
+    toggleVideoDemo('play');
+  }
+}
+
+function speakRatChef(text) {
+  if (ratChefVoiceMuted || !('speechSynthesis' in window)) return;
+  try {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.05;
+    window.speechSynthesis.speak(utterance);
+  } catch (_) { }
+}
+
 function toggleVoiceControl() {
   if (voiceEnabled) {
     stopVoiceControl();
@@ -717,16 +969,17 @@ function toggleVoiceControl() {
   }
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  voiceEnabled = true;
-  renderCooking();
 
   if (!SpeechRecognition) {
     voiceEnabled = false;
     renderCooking();
-    showToast('Live speech recognition is not supported here. Use the demo command picker.');
+    showToast('Live speech recognition is not supported in this browser. Opening simulator.');
     showVoiceChoices();
     return;
   }
+
+  voiceEnabled = true;
+  lastVoiceTranscript = '';
 
   try {
     const recognition = new SpeechRecognition();
@@ -735,34 +988,52 @@ function toggleVoiceControl() {
     recognition.interimResults = false;
     recognition.continuous = true;
     recognition.maxAlternatives = 1;
+
     recognition.onresult = event => {
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) handleVoice(event.results[i][0].transcript.toLowerCase());
+        if (event.results[i].isFinal) {
+          const phrase = event.results[i][0].transcript;
+          handleVoice(phrase);
+        }
       }
     };
+
     recognition.onerror = event => {
+      if (event.error === 'no-speech' || event.error === 'aborted') {
+        return;
+      }
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
         stopVoiceControl();
         renderCooking();
-        showToast('Microphone permission was denied.');
+        showToast('Microphone access not allowed. Web Speech requires HTTPS or localhost.');
+        showVoiceChoices();
       }
     };
+
     recognition.onend = () => {
       if (voiceEnabled && route === 'cooking' && voiceRecognition === recognition) {
         clearTimeout(voiceRestartTimeout);
         voiceRestartTimeout = setTimeout(() => {
           if (voiceEnabled && route === 'cooking' && voiceRecognition === recognition) {
-            try { recognition.start(); } catch (_) { /* The browser may still be closing the previous session. */ }
+            try {
+              recognition.start();
+            } catch (_) {
+              /* Browser may still be cycling */
+            }
           }
         }, 300);
       }
     };
+
     recognition.start();
-    showToast('Voice commands turned on.');
+    renderCooking();
+    showToast('🎙 Voice commands listening! Say "Read step", "Video", "Next"...');
+    speakRatChef('Listening for commands.');
   } catch (error) {
     stopVoiceControl();
     renderCooking();
-    showToast('Could not start the microphone. Check browser permissions.');
+    showToast('Could not start microphone. Opening command simulator.');
+    showVoiceChoices();
   }
 }
 
@@ -774,48 +1045,201 @@ function stopVoiceControl() {
     const recognition = voiceRecognition;
     voiceRecognition = null;
     recognition.onend = null;
-    try { recognition.stop(); } catch (_) { /* Recognition may already have stopped. */ }
+    recognition.onerror = null;
+    try { recognition.stop(); } catch (_) { }
+  }
+  if ('speechSynthesis' in window) {
+    try { window.speechSynthesis.cancel(); } catch (_) { }
   }
 }
 
 function showVoiceChoices() {
-  const choices = ['Next', 'Previous', 'Repeat', 'Start timer', 'Pause timer', 'Skip timer'];
+  const steps = getActiveCookingSteps();
+  const step = steps[cookStep];
+  const stepHasTimer = Boolean(step && step.timer);
+
+  const choices = [
+    stepReadOnce
+      ? { label: 'Repeat instructions', cmd: 'repeat' }
+      : { label: 'Read step', cmd: 'read step' },
+    { label: 'Start video demonstration', cmd: 'play video' },
+    { label: 'Restart video', cmd: 'restart video' },
+    { label: 'Pause video', cmd: 'pause video' },
+    { label: 'Next step', cmd: 'next' },
+    { label: 'Previous step', cmd: 'previous' }
+  ];
+
+  if (stepHasTimer) {
+    choices.push(
+      { label: 'Start timer', cmd: 'start timer' },
+      { label: 'Pause timer', cmd: 'pause timer' },
+      { label: 'How much time left?', cmd: 'time remaining' }
+    );
+  }
+
+  if (stepReadOnce) {
+    choices.unshift({ label: 'Read step again', cmd: 'read step' });
+  }
+
   openModal(`
     <div class="modal-handle"></div>
-    <p class="eyebrow">VOICE COMMAND DEMO</p>
-    <h2>Choose a command</h2>
-    <p class="subtitle">This browser does not expose live speech recognition, so select a sample command to test the interaction.</p>
-    <div class="form-grid">${choices.map(x => `<button class="secondary voice-choice" data-command="${x.toLowerCase()}">“${x}”</button>`).join('')}</div>`);
+    <p class="eyebrow">VOICE COMMAND SIMULATOR</p>
+    <h2>Simulate a voice command</h2>
+    <p class="subtitle">Available hands-free commands for <strong>Step ${cookStep + 1}</strong> (${stepHasTimer ? 'timer available' : 'no timer on this step'}):</p>
+    <div class="form-grid">
+      ${choices.map(c => `<button class="secondary voice-choice" data-command="${c.cmd}">“${c.label}”</button>`).join('')}
+    </div>
+    <form id="customVoiceForm" style="margin-top:14px;display:flex;gap:8px;">
+      <input class="search" id="customVoiceInput" placeholder="Or type a spoken phrase..." aria-label="Type a voice command" style="flex:1;">
+      <button class="primary" type="submit" style="min-width:75px;">Say it</button>
+    </form>
+  `);
   document.querySelectorAll('.voice-choice').forEach(button => {
     button.onclick = () => {
       closeModal();
       handleVoice(button.dataset.command);
     };
   });
+  const customForm = document.querySelector('#customVoiceForm');
+  if (customForm) {
+    customForm.onsubmit = e => {
+      e.preventDefault();
+      const val = document.querySelector('#customVoiceInput')?.value?.trim();
+      if (val) {
+        closeModal();
+        handleVoice(val);
+      }
+    };
+  }
 }
 
 function handleVoice(command) {
   const steps = getActiveCookingSteps();
-  const normalised = command.toLowerCase();
-  if (normalised.includes('next')) {
-    cookStep++;
-    renderCooking();
-    showToast('Voice command recognised: Next');
-  } else if (normalised.includes('previous') || normalised.includes('back')) {
-    cookStep = Math.max(0, cookStep - 1);
-    renderCooking();
-    showToast('Voice command recognised: Previous');
-  } else if (normalised.includes('repeat')) {
-    const step = steps[cookStep];
-    if (step) showToast(`RatChef says: ${step.text}`);
-  } else if (normalised.includes('start') || normalised.includes('resume')) {
-    startCurrentTimer();
-  } else if (normalised.includes('pause')) {
-    pauseTimer();
-  } else if (normalised.includes('skip')) {
-    skipCurrentTimer();
-  } else {
-    showToast('Command not recognised. Try next, previous, repeat, start, pause or skip.');
+  const raw = String(command || '').trim();
+  const normalised = raw.toLowerCase();
+  lastVoiceTranscript = raw;
+
+  const step = steps[cookStep];
+  const stepHasTimer = Boolean(step && step.timer);
+
+  // Video demonstration controls
+  if (/\b(video|demonstration|footage|demo)\b/.test(normalised)) {
+    if (/\b(restart|replay|from beginning)\b/.test(normalised)) {
+      toggleVideoDemo('restart');
+    } else if (/\b(pause|stop|halt)\b/.test(normalised)) {
+      toggleVideoDemo('pause');
+    } else if (/\b(start|play|show|watch|resume)\b/.test(normalised)) {
+      toggleVideoDemo('play');
+    } else {
+      toggleVideoDemo('toggle');
+    }
+  }
+  // Next step
+  else if (/\b(next|forward|advance|continue|done|finished|ahead|pr[oó]ximo)\b/.test(normalised)) {
+    if (cookStep < steps.length - 1) {
+      cookStep++;
+      stepReadOnce = false;
+      renderCooking();
+      const current = steps[cookStep];
+      showToast(`🎙 "Next": Step ${cookStep + 1} of ${steps.length}`);
+      speakRatChef(`Step ${cookStep + 1}. ${current.title}.`);
+    } else {
+      cookStep++;
+      stepReadOnce = false;
+      renderCooking();
+      showToast('🎙 Recipe complete!');
+      speakRatChef('Recipe complete! Well done.');
+    }
+  }
+  // Previous step
+  else if (/\b(previous|prev|back|last|return|anterior)\b/.test(normalised)) {
+    if (cookStep > 0) {
+      cookStep--;
+      stepReadOnce = false;
+      renderCooking();
+      const current = steps[cookStep];
+      showToast(`🎙 "Previous": Step ${cookStep + 1} of ${steps.length}`);
+      speakRatChef(`Step ${cookStep + 1}. ${current.title}.`);
+    } else {
+      showToast('Already on the first step.');
+      speakRatChef('You are already on the first step.');
+    }
+  }
+  // Read instructions / Repeat instructions
+  else if (/\b(read|repeat|say|explain|tell|instructions?|what|again|repetir|ler)\b/.test(normalised)) {
+    const isRepeat = /\b(repeat|again|say again|repetir)\b/.test(normalised);
+    const isRead = /\b(read|tell|explain|what|instructions?|ler)\b/.test(normalised);
+
+    if (isRepeat && !isRead && !stepReadOnce) {
+      showToast('Say "Read step" to hear instructions first.');
+      speakRatChef('Say "read step" to hear the instructions for this step.');
+      if (voiceEnabled) {
+        const heardElem = document.querySelector('#voiceHeardStatus');
+        if (heardElem) heardElem.textContent = 'Tip: Say "Read step" first';
+      }
+    } else {
+      stepReadOnce = true;
+      showToast(`🎙 ${isRepeat ? 'Repeating' : 'RatChef'}: ${step.text}`);
+      speakRatChef(step.text);
+    }
+  }
+  // Timer controls (only allowed if current step has a timer)
+  else if (/\b(timer|cron[oó]metro)\b/.test(normalised) || (/\b(start|begin|run|iniciar|pause|stop|halt|pausar|resume|skip|time|remaining|tempo)\b/.test(normalised) && !/\b(step|video|demonstration)\b/.test(normalised))) {
+    if (!stepHasTimer) {
+      showToast('No timer is available for this step.');
+      speakRatChef('There is no timer for this step.');
+      return;
+    }
+
+    if (/\b(start|begin|run|iniciar)\b/.test(normalised)) {
+      if (timerStatus === 'running') {
+        showToast('Timer is already running.');
+        speakRatChef('Timer is already running.');
+      } else {
+        startCurrentTimer();
+        showToast('🎙 Timer started.');
+        speakRatChef('Timer started.');
+      }
+    } else if (/\b(pause|stop|halt|pausar)\b/.test(normalised)) {
+      if (timerStatus === 'running') {
+        pauseTimer();
+        showToast('🎙 Timer paused.');
+        speakRatChef('Timer paused.');
+      } else {
+        showToast('No timer is currently running to pause.');
+        speakRatChef('No timer is running.');
+      }
+    } else if (/\b(resume|continue timer|unpause)\b/.test(normalised)) {
+      if (timerStatus === 'paused') {
+        startCurrentTimer();
+        showToast('🎙 Timer resumed.');
+        speakRatChef('Timer resumed.');
+      } else {
+        showToast('Timer is not paused.');
+      }
+    } else if (/\b(skip|ignore timer)\b/.test(normalised)) {
+      skipCurrentTimer();
+      showToast('🎙 Timer skipped.');
+      speakRatChef('Timer skipped.');
+    } else if (/\b(time|how much|remaining|left|tempo)\b/.test(normalised)) {
+      if (timerStatus === 'running' || timerStatus === 'paused') {
+        const mins = Math.floor(timerSeconds / 60);
+        const secs = timerSeconds % 60;
+        const timeStr = mins > 0 ? `${mins} minute${mins > 1 ? 's' : ''} and ${secs} seconds` : `${secs} seconds`;
+        showToast(`⏱ ${formatTime(timerSeconds)} remaining`);
+        speakRatChef(`${timeStr} remaining.`);
+      } else {
+        showToast(`Timer is set for ${step.timer} minutes.`);
+        speakRatChef(`Timer is set for ${step.timer} minutes.`);
+      }
+    }
+  }
+  else {
+    showToast(`Command not recognised: "${raw}". Try "Read step", "Next", "Play video", or "Start timer".`);
+    if (voiceEnabled) {
+      const heardElem = document.querySelector('#voiceHeardStatus');
+      if (heardElem) heardElem.textContent = `Unrecognised: "${raw}"`;
+    }
   }
 }
 
