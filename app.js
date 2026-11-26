@@ -159,11 +159,11 @@ function renderRecipeArt(r, extraClass = '') {
 
 const cookingGuides = {
   ratatouille: [
-    { title: 'Prep the vegetables', icon: '🔪', text: 'Wash the courgette, aubergine, peppers and tomatoes. Trim the ends, then slice everything into even rounds so the vegetables cook at the same pace.' },
-    { title: 'Make the tomato base', icon: '🥫', text: 'Finely chop the onion and garlic. Warm olive oil in a pan, soften the onion, then stir in the garlic and chopped tomatoes. Simmer until the sauce thickens slightly.' },
-    { title: 'Layer the vegetables', icon: '🥒', text: 'Spread the tomato sauce across the bottom of an ovenproof dish. Arrange the courgette, aubergine, pepper and tomato slices in overlapping rows. Season with salt, pepper and herbs.' },
-    { title: 'Bake until tender', icon: '⏱️', text: 'Cover the dish loosely with foil and place it in a preheated oven at 190°C. Press START to time 25 minutes. The vegetables should become tender without losing their shape.', timer: 25, timerLabel: 'Ratatouille bake' },
-    { title: 'Prepare the herb oil', icon: '🌿', text: 'While the vegetables bake, finely chop the fresh herbs. Mix them with olive oil, a pinch of salt and a little black pepper.' },
+    { title: 'Prep the vegetables', icon: '🔪', text: 'Wash the courgette, aubergine, peppers and tomatoes. Trim the ends, then slice everything into even rounds so the vegetables cook at the same pace.', gif:'gifs/prep_vegetables.gif' },
+    { title: 'Make the tomato base', icon: '🥫', text: 'Finely chop the onion and garlic. Warm olive oil in a pan, soften the onion, then stir in the garlic and chopped tomatoes. Simmer until the sauce thickens slightly.', gif:'gifs/tomato_base.gif' },
+    { title: 'Layer the vegetables', icon: '🥒', text: 'Spread the tomato sauce across the bottom of an ovenproof dish. Arrange the courgette, aubergine, pepper and tomato slices in overlapping rows. Season with salt, pepper and herbs.', gif:'gifs/ratatouille-food.gif' },
+    { title: 'Bake until tender', icon: '⏱️', text: 'Cover the dish loosely with foil and place it in a preheated oven at 190°C. Press START to time 25 minutes. The vegetables should become tender without losing their shape.', timer: 25, timerLabel: 'Ratatouille bake', gif:'gifs/oven.gif' },
+    { title: 'Prepare the herb oil', icon: '🌿', text: 'While the vegetables bake, finely chop the fresh herbs. Mix them with olive oil, a pinch of salt and a little black pepper.', gif:'gifs/olive_oil.gif' },
     { title: 'Finish and serve', icon: '🍲', text: 'Check that the vegetables are tender. Spoon the herb oil over the top and let the dish rest briefly. Serve warm with crusty bread or as a side.' }
   ],
   'spinach-rice': [
@@ -246,7 +246,23 @@ function go(next, push = true) {
 }
 
 function goBack() {
-  if (route === 'cooking' || route === 'missing-ingredients') { go('recipe-detail', false); return; }
+  if (route === 'cooking') {
+    const steps = getActiveCookingSteps();
+    openModal(`
+      <div class="modal-handle"></div>
+      <p class="eyebrow">LEAVE COOKING GUIDE?</p>
+      <h2>Return to the recipe?</h2>
+      <p class="subtitle">Your current guide step will be interrupted. You can start the guide again from the recipe page.</p>
+      <p class="guide-availability-note">Current progress: step ${Math.min(cookStep + 1, steps.length)} of ${steps.length}</p>
+      <button class="danger" id="confirmLeaveCooking" type="button" style="width:100%;margin-top:12px">Leave cooking guide</button>
+    `, 'Stay in cooking guide');
+    document.querySelector('#confirmLeaveCooking').onclick = () => {
+      closeModal();
+      go('recipe-detail', false);
+    };
+    return;
+  }
+  if (route === 'missing-ingredients') { go('recipe-detail', false); return; }
   go(history.pop() || 'home', false);
 }
 
@@ -648,7 +664,7 @@ function renderMissingIngredients() {
             </label>
           </div>`).join('')}
       </div>
-      <p class="substitute-help">Substitutions are recorded for this demo. RatChef's guided steps stay the same.</p>
+      <p class="substitute-help">Substitutions are recorded for this demo.</p>
       <div class="missing-screen-actions">
         <button class="secondary" id="cancelMissing">Cancel</button>
         <button class="secondary" id="cookWithout">Cook without</button>
@@ -673,7 +689,7 @@ function renderMissingIngredients() {
     }
     state.recipeSubstitutions[recipe.id] = selections;
     const summary = Object.entries(selections).map(([from, to]) => `${to} for ${from}`).join(', ');
-    showToast(`Using ${summary}. RatChef's guide will stay the same.`);
+    showToast(`Using ${summary}.`);
     beginCooking();
   };
 }
@@ -748,11 +764,12 @@ function renderCooking() {
       </header>
 
       <section class="cook-video-placeholder" aria-label="Step video demonstration">
-        <div class="cook-video-frame">
+        <div class="cook-video-frame${step.gif ? ' has-gif' : ''}">
+          ${step.gif ? `<img class="cook-video-gif" src="${escapeHtml(step.gif)}" data-gif-src="${escapeHtml(step.gif)}" alt="${escapeHtml(step.title)} demonstration" hidden onerror="this.hidden=true;this.dataset.failed='true'">` : ''}
           <span class="cook-video-scene" aria-hidden="true">${step.icon || '🍳'}</span>
           <span class="cook-video-tag">STEP VIDEO DEMONSTRATION</span>
           <button class="play-button" id="playDemo" type="button" aria-label="Play ${escapeHtml(step.title)} video demonstration" aria-pressed="false">▶</button>
-          <span class="cook-video-duration">1:20</span>
+          <span class="cook-video-duration">${step.gif ? 'GIF' : '1:20'}</span>
         </div>
         <div class="cook-video-copy">
           <span>WATCH THE TECHNIQUE</span>
@@ -810,16 +827,10 @@ function renderCooking() {
 
   document.querySelector('#previousStep').onclick = () => {
     if (cookStep > 0) {
-      cookStep--;
-      stepReadOnce = false;
-      renderCooking();
+      moveCookingStep(-1);
     }
   };
-  document.querySelector('#nextStep').onclick = () => {
-    cookStep++;
-    stepReadOnce = false;
-    renderCooking();
-  };
+  document.querySelector('#nextStep').onclick = () => moveCookingStep(1);
   document.querySelector('#repeatStep').onclick = () => {
     stepReadOnce = true;
     showToast(`RatChef says: ${step.text}`);
@@ -839,6 +850,31 @@ function renderCooking() {
   if (pauseButton) pauseButton.onclick = () => { pauseTimer(); };
   if (resumeButton) resumeButton.onclick = startCurrentTimer;
   if (skipButton) skipButton.onclick = skipCurrentTimer;
+}
+
+function moveCookingStep(direction) {
+  const steps = getActiveCookingSteps();
+  const nextStepIndex = cookStep + direction;
+
+  if (nextStepIndex < 0) return false;
+
+  if (nextStepIndex >= steps.length) {
+    cookStep = steps.length;
+    stepReadOnce = false;
+    renderCooking();
+    speakRatChef('Recipe complete! Well done.');
+    return false;
+  }
+
+  cookStep = nextStepIndex;
+  stepReadOnce = true;
+  renderCooking();
+
+  const step = steps[cookStep];
+  speakRatChef(`${step.title}. ${step.text}`);
+
+  if (step.hasVideo !== false || step.gif) toggleVideoDemo('play');
+  return true;
 }
 
 function renderCompletion() {
@@ -869,27 +905,53 @@ function toggleVideoDemo(action = 'toggle') {
 
   const steps = getActiveCookingSteps();
   const currentStep = steps[cookStep];
-  if (currentStep && currentStep.hasVideo === false) {
+  if (currentStep && currentStep.hasVideo === false && !currentStep.gif) {
     showToast('No video demonstration for this step.');
-    speakRatChef('There is no video demonstration for this step.');
     return;
   }
 
+  const gifImage = frame.querySelector('.cook-video-gif');
+  const gif = gifImage && gifImage.dataset.failed !== 'true' ? gifImage : null;
+  const gifSource = gif?.dataset.gifSrc;
   const isPlaying = button.getAttribute('aria-pressed') === 'true';
 
-  if (action === 'pause') {
-    if (!isPlaying) {
-      showToast('No video demonstration is currently playing.');
-      speakRatChef('No video is currently playing.');
-      return;
-    }
-    clearTimeout(window.videoDemoTimer);
+  const showPlayingState = () => {
+    button.setAttribute('aria-pressed', 'true');
+    button.textContent = 'Ⅱ';
+    button.setAttribute('aria-label', 'Pause video demonstration');
+    frame.classList.add('is-playing');
+  };
+
+  const showPausedState = () => {
     button.setAttribute('aria-pressed', 'false');
     button.textContent = '▶';
     button.setAttribute('aria-label', 'Play video demonstration');
     frame.classList.remove('is-playing');
+  };
+
+  const startPlaceholderPlaybackTimer = () => {
+    clearTimeout(window.videoDemoTimer);
+    if (gif) return;
+    window.videoDemoTimer = setTimeout(() => {
+      const currentButton = document.querySelector('#playDemo');
+      if (currentButton && currentButton.getAttribute('aria-pressed') === 'true') {
+        showPausedState();
+      }
+    }, 2800);
+  };
+
+  if (action === 'pause') {
+    if (!isPlaying) {
+      showToast('No video demonstration is currently playing.');
+      return;
+    }
+    clearTimeout(window.videoDemoTimer);
+    showPausedState();
+    if (gif) {
+      gif.hidden = true;
+      gif.dataset.wasPaused = 'true';
+    }
     showToast('Video demonstration paused.');
-    speakRatChef('Video paused.');
     return;
   }
 
@@ -897,55 +959,38 @@ function toggleVideoDemo(action = 'toggle') {
     clearTimeout(window.videoDemoTimer);
     frame.classList.remove('is-playing');
     void frame.offsetWidth;
-    button.setAttribute('aria-pressed', 'true');
-    button.textContent = 'Ⅱ';
-    button.setAttribute('aria-label', 'Pause video demonstration');
-    frame.classList.add('is-playing');
+    if (gif && gifSource) {
+      gif.hidden = false;
+      delete gif.dataset.wasPaused;
+
+      gif.removeAttribute('src');
+      gif.src = gifSource;
+    }
+    showPlayingState();
     showToast('Restarting video demonstration.');
-    speakRatChef('Restarting video demonstration.');
-    window.videoDemoTimer = setTimeout(() => {
-      const cur = document.querySelector('#playDemo');
-      if (cur && cur.getAttribute('aria-pressed') === 'true') {
-        cur.setAttribute('aria-pressed', 'false');
-        cur.textContent = '▶';
-        cur.setAttribute('aria-label', 'Play video demonstration');
-        document.querySelector('.cook-video-frame')?.classList.remove('is-playing');
-      }
-    }, 2800);
+    startPlaceholderPlaybackTimer();
     return;
   }
 
   if (action === 'play') {
-    if (isPlaying) {
-      showToast('Video demonstration is already playing.');
-      speakRatChef('Video is already playing.');
-      return;
-    }
-    button.setAttribute('aria-pressed', 'true');
-    button.textContent = 'Ⅱ';
-    button.setAttribute('aria-label', 'Pause video demonstration');
-    frame.classList.add('is-playing');
-    showToast('Video demonstration playing (placeholder).');
-    speakRatChef('Starting video demonstration.');
-    clearTimeout(window.videoDemoTimer);
-    window.videoDemoTimer = setTimeout(() => {
-      const cur = document.querySelector('#playDemo');
-      if (cur && cur.getAttribute('aria-pressed') === 'true') {
-        cur.setAttribute('aria-pressed', 'false');
-        cur.textContent = '▶';
-        cur.setAttribute('aria-label', 'Play video demonstration');
-        document.querySelector('.cook-video-frame')?.classList.remove('is-playing');
+    if (isPlaying) return;
+    if (gif && gifSource) {
+      gif.hidden = false;
+
+      if (gif.dataset.wasPaused === 'true' || !gif.getAttribute('src')) {
+        delete gif.dataset.wasPaused;
+        gif.removeAttribute('src');
+        gif.src = gifSource;
       }
-    }, 2800);
+    }
+    showPlayingState();
+    showToast(gif ? 'GIF demonstration playing.' : 'Video demonstration playing (placeholder).');
+    startPlaceholderPlaybackTimer();
     return;
   }
 
-  // Toggle on user tap
-  if (isPlaying) {
-    toggleVideoDemo('pause');
-  } else {
-    toggleVideoDemo('play');
-  }
+  if (isPlaying) toggleVideoDemo('pause');
+  else toggleVideoDemo('play');
 }
 
 function speakRatChef(text) {
@@ -1136,30 +1181,15 @@ function handleVoice(command) {
   }
   // Next step
   else if (/\b(next|forward|advance|continue|done|finished|ahead|pr[oó]ximo)\b/.test(normalised)) {
-    if (cookStep < steps.length - 1) {
-      cookStep++;
-      stepReadOnce = false;
-      renderCooking();
-      const current = steps[cookStep];
-      showToast(`🎙 "Next": Step ${cookStep + 1} of ${steps.length}`);
-      speakRatChef(`Step ${cookStep + 1}. ${current.title}.`);
-    } else {
-      cookStep++;
-      stepReadOnce = false;
-      renderCooking();
-      showToast('🎙 Recipe complete!');
-      speakRatChef('Recipe complete! Well done.');
-    }
+    moveCookingStep(1);
+    if (cookStep < steps.length) showToast(`🎙 "Next": Step ${cookStep + 1} of ${steps.length}`);
+    else showToast('🎙 Recipe complete!');
   }
   // Previous step
   else if (/\b(previous|prev|back|last|return|anterior)\b/.test(normalised)) {
     if (cookStep > 0) {
-      cookStep--;
-      stepReadOnce = false;
-      renderCooking();
-      const current = steps[cookStep];
+      moveCookingStep(-1);
       showToast(`🎙 "Previous": Step ${cookStep + 1} of ${steps.length}`);
-      speakRatChef(`Step ${cookStep + 1}. ${current.title}.`);
     } else {
       showToast('Already on the first step.');
       speakRatChef('You are already on the first step.');
@@ -1363,11 +1393,15 @@ function adjustShoppingQuantity(index, delta) {
 }
 
 function renderOther() {
-  screen.innerHTML = `<p class="eyebrow">Stage 4 prototype</p><h1>About this demo</h1><p class="subtitle">An interaction prototype for Sous-Chef Ratchet. No account or backend is required.</p><article class="card info-card"><h2>Complete flows</h2><ul class="scope-list"><li>Add a product by barcode or manual entry</li><li>Sort inventory with filters</li><li>Discover recipes based on inventory and time required</li><li>Review missing ingredients and choose how to proceed</li><li>Follow guided cooking sequences for supported recipes</li><li>Manual start, pause and skip timers during cooking guides</li><li>Adjust shopping quantities or remove list items</li></ul></article><article class="card info-card"><h2>Intentionally limited</h2><ul class="scope-list"><li>Video demonstrations are just placeholders, not recorded videos</li><li>Some catalogue recipes (those with too many missing ingredients) have no cooking guide</li><li>Barcode scanning uses a simulation</li><li>This "Other" tab mentions only these limitations, but is meant to be where most app settings are in a real scenario</li></ul></article><button class="danger" id="resetDemo" style="width:100%">Reset prototype</button>`;
+  screen.innerHTML = `<p class="eyebrow">Stage 4 prototype</p><h1>About this demo</h1><p class="subtitle">An interaction prototype for Sous-Chef Ratchet. No account or backend is required.</p><article class="card info-card"><h2>Complete flows</h2><ul class="scope-list"><li>Add a product by barcode or manual entry</li><li>Sort inventory with filters</li><li>Discover recipes based on inventory and time required</li><li>Review missing ingredients and choose how to proceed</li><li>Follow guided cooking sequences for supported recipes</li><li>Manual start, pause and skip timers during cooking guides</li><li>Adjust shopping quantities or remove list items</li></ul></article><article class="card info-card"><h2>Intentionally limited</h2><ul class="scope-list"><li>Video demonstrations use placeholders by default; optional GIFs can be configured per step in app.js</li><li>Some catalogue recipes (those with too many missing ingredients) have no cooking guide</li><li>Barcode scanning uses a simulation</li><li>This "Other" tab mentions only these limitations, but is meant to be where most app settings are in a real scenario</li></ul></article><button class="danger" id="resetDemo" style="width:100%">Reset prototype</button>`;
   document.querySelector('#resetDemo').onclick=()=>resetState(true);
 }
 
-function openModal(html){ modalLayer.innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}<button class="text-button" id="closeModal" style="width:100%;margin-top:10px">Cancel</button></div>`; document.querySelector('#closeModal').onclick=closeModal; modalLayer.onclick=e=>{if(e.target===modalLayer)closeModal();}; }
+function openModal(html, cancelLabel = 'Cancel') {
+  modalLayer.innerHTML = `<div class="modal" role="dialog" aria-modal="true">${html}<button class="text-button" id="closeModal" style="width:100%;margin-top:10px">${escapeHtml(cancelLabel)}</button></div>`;
+  document.querySelector('#closeModal').onclick = closeModal;
+  modalLayer.onclick = event => { if (event.target === modalLayer) closeModal(); };
+}
 function closeModal(){ modalLayer.innerHTML=''; }
 function showToast(message){ toast.textContent=message;toast.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>toast.classList.remove('show'),2800); }
 function escapeHtml(s){ return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
