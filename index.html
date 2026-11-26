@@ -340,6 +340,55 @@
       cursor: pointer;
     }
     .mic-toggle.is-on { border-color: #9bc9a6; background: #e5f3e9; color: #1e6a43; box-shadow: 0 0 0 2px rgba(62, 140, 86, 0.10); }
+    .mic-toggle.is-listening {
+      border-color: #2da44e !important;
+      background: #dafbe1 !important;
+      color: #1a7f37 !important;
+      animation: micPulse 1.4s infinite ease-in-out;
+    }
+    @keyframes micPulse {
+      0% { box-shadow: 0 0 0 0 rgba(46, 160, 67, 0.45); }
+      70% { box-shadow: 0 0 0 8px rgba(46, 160, 67, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(46, 160, 67, 0); }
+    }
+    .voice-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 6px 0 0;
+      padding: 4px 8px;
+      background: #eef6f0;
+      border: 1px solid #cce5d4;
+      border-radius: 9px;
+      color: #1e6a43;
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+    .voice-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #2da44e;
+      display: inline-block;
+      flex: 0 0 auto;
+      animation: dotBlink 1s infinite alternate;
+    }
+    @keyframes dotBlink {
+      from { opacity: 0.35; }
+      to { opacity: 1; }
+    }
+    .voice-sim-link {
+      color: #285b82;
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+      white-space: nowrap;
+    }
     .mic-toggle svg { display: block; width: 16px; height: 16px; }
     .cook-next-button { min-height: 43px; }
     .voice-status-note {
@@ -836,6 +885,30 @@
       .timer-action { min-width: 50px; padding: 6px 7px; }
     }
 
+
+    .brand { display: inline-flex; align-items: center; justify-content: flex-start; gap: 0; }
+    .brand-logo { display: block; width: 200px; height: 42px; max-width: none; object-fit: fill; }
+    .brand-fallback { color: inherit; font: inherit; }
+
+    #screen.cooking-mode { display: flex; justify-content: center; align-items: stretch; }
+    #screen.cooking-mode > .cook-screen { width: min(100%, 980px); margin: 0 auto; }
+    #screen.cooking-mode .cook-top,
+    #screen.cooking-mode .cook-bottom { width: min(100%, 860px); align-self: center; }
+    #screen.cooking-mode .cook-video-placeholder,
+    #screen.cooking-mode .cook-main { width: min(100%, 860px); align-self: center; }
+    
+    .cook-video-frame { isolation: isolate; }
+    .cook-video-gif { position: absolute; z-index: 0; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+    .cook-video-frame:has(.cook-video-gif:not([hidden])) .cook-video-scene { display: none; }
+    .cook-video-frame:has(.cook-video-gif:not([hidden]))::after { display: none; }
+
+    @media (max-width: 520px) {
+      .brand-logo { height: 36px; max-width: min(170px, 43vw); }
+      #screen.cooking-mode .cook-top,
+      #screen.cooking-mode .cook-bottom,
+      #screen.cooking-mode .cook-video-placeholder,
+      #screen.cooking-mode .cook-main { width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -844,8 +917,8 @@
     <header class="topbar">
       <button class="icon-button back-button is-hidden" id="backButton" aria-label="Go back">←</button>
       <button class="brand" data-route="home" aria-label="Go to home">
-        <span class="brand-mark" aria-hidden="true">♨</span>
-        <span>Sous-Chef Ratchet</span>
+        <img class="brand-logo" src="RatChef_Logo_Transparent.png" alt="Sous-Chef Ratchet" onerror="this.hidden=true;this.parentElement.querySelector('.brand-fallback').hidden=false">
+        <span class="brand-fallback" hidden>Sous-Chef Ratchet</span>
       </button>
       <div class="topbar-actions">
         <span class="demo-pill">Prototype</span>
@@ -866,6 +939,6 @@
 
   <div class="toast" id="toast" role="status"></div>
   <div class="modal-layer" id="modalLayer" aria-live="assertive"></div>
-  <script src="app.js?v=cooking-guide-v6-video-top"></script>
+  <script src="app.js?v=cooking-guide-v7-media-confirmation"></script>
 </body>
 </html>

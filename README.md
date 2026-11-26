@@ -2,9 +2,17 @@
 
 An interaction prototype for NOVA FCT's Human-Computer Interaction course (2026/27).
 
-## Run Locally
+## Project Description
 
-No installation or backend is required. Open `index.html` in a browser, or simply access the site https://ipm-group-2.github.io/kitchen-assistant-prototype/.
+The goal of the project is to design and evaluate a mobile kitchen assistant that supports users throughout the process from managing their available food to preparing a meal.
+
+Our solution would allow users to maintain a kitchen inventory, discover recipes according to the ingredients they already have, identify missing or products about to expire, and transfer missing ingredients directly to a shopping list.
+
+During meal preparation, the application provides a dedicated cooking mode with simplified step by step instructions accompanied by a video demonstration, adaptable controls, timers and optional voice interaction, reducing the need to touch the device while cooking.
+
+## Startup Instructions
+
+No installation or backend is required. Downlaod the project and open `index.html` in a browser, or simply access the site https://ipm-group-2.github.io/kitchen-assistant-prototype/.
 
 ## Evaluated Scenarios
 
@@ -28,11 +36,12 @@ Using the app, prepare the recipe while referring to the information you need th
 
 ## Prototype Limitations
 
+- The user is constantly logged in as "Bruno". There are no profiles or user settings in this version.
 - Shopping list tab is incomplete, but no scenario involves it directly.
 - Barcode scanning is simulated.
-- The cooking guide videos are placeholders rather than functional cooking footage.
-- Voice commands on cooking guide do not work.
+- Most cooking guide videos are placeholders rather than functional cooking footage, to optimize the prototype's storage load. The Ratatouille guide has some cooking gifs.
+- Cooking guide supports hands-free voice commands (via Web Speech API or built-in voice simulator) with audible speech feedback from RatChef.
 - Recipe ingredient requirements are not accurate, they are hard coded to always have everything available or a few missing ingredients regardless of what the inventory actually contains.
-- Only the logo/mascot uses a real stored image. Recipes, ingredients and video placeholders use emojis.
+- Recipes and mascot use real stored images. Ingredients and video placeholders use emojis.
 - "Other" tab is used only to mention these limitations, in a real app it would be used to access app settings.
 - Data is stored only for the current browser session and resets on refresh.
